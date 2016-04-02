@@ -3,62 +3,83 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.vecmath.Vector2d;
 
 public class InputMap implements KeyListener, MouseListener, MouseMotionListener {
 	
 	Boolean mouseEnabled, keyEnabled;
-	ArrayList<KeyEvent> keysMonitored;
+	Set<Integer> keyCodes;
+	Map<Integer, Integer> activeCodes;
+	int keyLatency;
 	
 	public InputMap()
 	{
-		keysMonitored = new ArrayList<KeyEvent>();
+		keyCodes = new HashSet<Integer>();
+		activeCodes = new HashMap<Integer, Integer>();
 	}
 	
 	public void enableMouse() { mouseEnabled = true; }
 	public void disableMouse() { mouseEnabled = false; }
-	public void enableKeys() { keyEnabled = true; }
+	public void enableKeys(int keyLatency) 
+	{ 
+		keyEnabled = true;
+		this.keyLatency = keyLatency;
+	}
 	public void disableKeys() { keyEnabled = false; }
 	
 	public void update()
 	{
-		
+		if (keyEnabled)
+		{
+			for (int code : activeCodes.keySet())
+			{
+				int val = activeCodes.get(code); 
+				if (val > 0)
+				{
+					//System.out.println("Code timing out: " + code + "-" + val);
+					activeCodes.put(code, val - 1);
+				}
+			}
+		}
+	}
+	
+	public void addKeyCode(int code) 
+	{ 
+		keyCodes.add(code);
+		activeCodes.put(code, 0);
+	}
+	public void removeKeyCode(int code) 
+	{ 
+		keyCodes.remove(code); 
+		activeCodes.remove(code);
+	}
+	public Boolean isKeyActive(int code) 
+	{ 
+		return activeCodes.get(code) > 0;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent key) {
 		// TODO Auto-generated method stub
-		/*if((key.getKeyCode() == KeyEvent.VK_Q))
-			left = true;
-		if((key.getKeyCode() == KeyEvent.VK_E))
-			right = true;
-		if((key.getKeyCode() == KeyEvent.VK_A))
-			sleft = true;
-		if((key.getKeyCode() == KeyEvent.VK_D))
-			sright = true;
-		if((key.getKeyCode() == KeyEvent.VK_W))
-			forward = true;
-		if((key.getKeyCode() == KeyEvent.VK_S))
-			back = true;*/
+		if (keyEnabled)
+		{
+			int code = key.getKeyCode();
+			if (keyCodes.contains(code))
+			{
+				System.out.println("Key code: " + code);
+				activeCodes.put(code, keyLatency);
+			}
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent key) {
 		// TODO Auto-generated method stub
-		/*if((key.getKeyCode() == KeyEvent.VK_Q))
-			left = false;
-		if((key.getKeyCode() == KeyEvent.VK_E))
-			right = false;
-		if((key.getKeyCode() == KeyEvent.VK_A))
-			sleft = false;
-		if((key.getKeyCode() == KeyEvent.VK_D))
-			sright = false;
-		if((key.getKeyCode() == KeyEvent.VK_W))
-			forward = false;
-		if((key.getKeyCode() == KeyEvent.VK_S))
-			back = false;*/
 	}
 
 	@Override
@@ -84,18 +105,19 @@ public class InputMap implements KeyListener, MouseListener, MouseMotionListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Mouse clicked " + arg0.getX() + " " + arg0.getY());
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("Mouse entered");
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
+		System.out.println("Mouse exited");
 		
 	}
 

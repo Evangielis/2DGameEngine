@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -17,6 +18,7 @@ public class Game extends JFrame implements Runnable{
 	public int[] pixels;
 	public Camera camera;
 	public Painter screen;
+	public InputMap inputs;
 	
 	public int resWidth = 800;
 	public int resHeight = 600;
@@ -36,8 +38,18 @@ public class Game extends JFrame implements Runnable{
 		
 		
 		camera = new Camera(4.5, 4.5, 1, 0, 0, -.66);
-		addKeyListener(camera);
 		screen = new Painter(resWidth, resHeight);
+		inputs = new InputMap();
+		
+		inputs.enableKeys(1);
+		inputs.enableMouse();
+		addKeyListener(inputs);
+		addMouseListener(inputs);
+		addMouseMotionListener(inputs);
+		inputs.addKeyCode(KeyEvent.VK_W);
+		inputs.addKeyCode(KeyEvent.VK_A);
+		inputs.addKeyCode(KeyEvent.VK_D);
+		inputs.addKeyCode(KeyEvent.VK_S);
 		
 		start();
 	}
@@ -72,6 +84,7 @@ public class Game extends JFrame implements Runnable{
 			while (delta >= 1)//Make sure update is only happening 60 times a second
 			{
 				//handles all of the logic restricted time
+
 				camera.update(null);
 				screen.enqueue(Texture.ship, new Vector2d(300,300), 0.1F);
 				/*for (int i = 0; i<1000; i++)
@@ -86,6 +99,9 @@ public class Game extends JFrame implements Runnable{
 					}
 				}*/
 				screen.paint(camera, pixels);
+				
+				
+				inputs.update();					
 				delta--;
 			}
 			render();//displays to the screen unrestricted time

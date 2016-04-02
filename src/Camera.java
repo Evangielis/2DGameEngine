@@ -2,7 +2,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.vecmath.Vector2d;
 
-public class Camera implements KeyListener {
+public class Camera {
 	public double xPos, yPos, xDir, yDir, xPlane, yPlane;
 	public boolean left, right, forward, back, sleft, sright;
 	public final double MOVE_SPEED = .05;
@@ -32,52 +32,8 @@ public class Camera implements KeyListener {
 		plane = new Vector2d(xp, yp);
 	}
 
-	@Override
-	public void keyPressed(KeyEvent key) {
-		// TODO Auto-generated method stub
-		if((key.getKeyCode() == KeyEvent.VK_Q))
-			left = true;
-		if((key.getKeyCode() == KeyEvent.VK_E))
-			right = true;
-		if((key.getKeyCode() == KeyEvent.VK_A))
-			sleft = true;
-		if((key.getKeyCode() == KeyEvent.VK_D))
-			sright = true;
-		if((key.getKeyCode() == KeyEvent.VK_W))
-			forward = true;
-		if((key.getKeyCode() == KeyEvent.VK_S))
-			back = true;
-	}
-
-	@Override
-	public void keyReleased(KeyEvent key) {
-		// TODO Auto-generated method stub
-		if((key.getKeyCode() == KeyEvent.VK_Q))
-			left = false;
-		if((key.getKeyCode() == KeyEvent.VK_E))
-			right = false;
-		if((key.getKeyCode() == KeyEvent.VK_A))
-			sleft = false;
-		if((key.getKeyCode() == KeyEvent.VK_D))
-			sright = false;
-		if((key.getKeyCode() == KeyEvent.VK_W))
-			forward = false;
-		if((key.getKeyCode() == KeyEvent.VK_S))
-			back = false;
-	}
-
-	@Override
-	public void keyTyped(KeyEvent key) {
-		// TODO Auto-generated method stub
-	}
-	
 	public void update(int[][] map) {
-		if(forward) { this.MoveForward(map); }
-		if(back) { this.MoveBackward(map); }
-		if(sleft) { this.SlideLeft(map); }
-		if(sright) { this.SlideRight(map); }
-		if(right) { this.TurnRight(); }
-		if(left) { this.TurnLeft(); }
+
 	}
 	
 	public Boolean CheckCollision(int[][] map, Vector2d pos)
