@@ -10,7 +10,7 @@ public class Painter {
 	private class PaintJob
 	{
 		Texture tex;
-		int[] getPixels() { return tex.getPixels(); }
+		int[] getRaster() { return tex.getRaster(); }
 		float layer;
 		float getLayer() { return layer; }
 		Vector2d location;
@@ -27,10 +27,11 @@ public class Painter {
     int width, height;
     Rectangle canvasArea;
     PriorityQueue jobQueue;
+    Game myGame;
     
-    public Painter(int w, int h) {
-        width = w;
-        height = h;
+    public Painter(Game myGame) {
+        width = myGame.frameWidth;
+        height = myGame.frameHeight;
         canvasArea = new Rectangle(0, 0, width, height);
         
         Comparator<PaintJob> comp = new Comparator<PaintJob>() {
@@ -77,22 +78,25 @@ public class Painter {
     	int xoffset = (int)job.getLoc().x;
     	int yoffset = (int)job.getLoc().y;
     	
+    	//Walking the raster line
+    	int lineOffset;
     	for (int i=0; i<job.tex.getHeight(); i++)
+    	{
+    		lineOffset = (yoffset+i)*width;
     		for (int j=0; j<job.tex.getWidth(); j++)
     		{
     			try
     			{
     				int pel = job.tex.getPixel(i, j);
     				if (pel != 0)
-    					canvas[((yoffset+i)*width + j + xoffset)] = pel; 
+    					canvas[lineOffset + j + xoffset] = pel; 
     			}
     			catch (ArrayIndexOutOfBoundsException e)
     			{
     				e.printStackTrace();
     			}
     		}
-    		
-    		
+    	}	
     	return canvas;
     }
     
